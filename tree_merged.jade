@@ -1,0 +1,73 @@
+extends sublayout_1
+
+block content
+  h1 SystemID : #{system.SystemName}
+  h1 Version : #{version}
+  h4 
+    a(href="/usecase/view/#{systemID}/#{version}/tree") Unmerged Tree&nbsp;|&nbsp;
+    a(href="/usecase/export/#{systemID}/#{version}" ) Export&nbsp;|&nbsp;
+    a(href="/usecase/reset_ecp/#{systemID}/#{version}") Reset ECP
+
+  div(id="classificationTree")
+  div(id="partition")
+
+  
+  each node in treeNodes.children
+    h1= node.name
+
+    each variable in node.children
+      h3= variable.name
+      table(class='table dct-table')
+        tr
+          if variable.type && (variable.type.toLowerCase() === 'number' || variable.type.toLowerCase() === 'float' || variable.type.toLowerCase() === 'integer')
+            each val, index in variable.partition
+              td #{val.value} (#{val.number})
+        tr
+          if variable.type && (variable.type.toLowerCase() === 'string' || variable.type.toLowerCase() === 'boolean')
+            each val, index in variable.partition
+              td #{val.value} (#{val.number})
+          else
+            if variable.partition
+              each val, index in variable.partition
+                td 
+                  div(style="float:left") #{val.min} 
+                  div(style="float:right") #{val.max}
+        tr
+          if variable.partition
+            each val, index in variable.partition
+              td(class=val.valid ? 'dct-merge' : 'dct-invalid')
+        
+
+  script(src="../../../../javascripts/tree.js")
+  script.
+    var useseses = !{JSON.stringify(usecases)};
+    var json_data = !{JSON.stringify(treeNodes)};
+    root = json_data; 
+    root.x0 = h / 2;
+    root.y0 = 0; 
+    update(json_data);
+
+  style.
+    table {
+      border-collapse: separate;
+      border-spacing: 10px;
+    }
+
+    td {
+      border-top: 0px !important;
+      text-align: center;
+      padding: 5px;
+    }
+
+    .dct-invalid {
+      background-color: red;
+    }
+
+    .dct-merge {
+      background-color: black;
+      border-collapse: separate;
+      border-spacing: 10px 50px;
+    }
+
+
+    

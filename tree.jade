@@ -1,0 +1,21 @@
+extends sublayout_1
+
+block content
+  h1 SystemID : #{system.SystemName}
+  h1 Version : #{version}
+  h4 
+    a(href="/usecase/view/#{systemID}/#{version}/tree_merged") Merged Tree
+  h4 Conditions: 
+    each condition in conditionList
+      a(href="/usecase/view/#{systemID}/#{version}/tree?condition=#{condition.condition}") #{condition.condition}
+      | ,&nbsp;&nbsp;
+  div(id="classificationTree")
+  script(src="../../../../javascripts/tree.js")
+  script.
+    var useseses = !{JSON.stringify(usecases)};
+    var json_data = !{JSON.stringify(treeNodes)};
+    root = json_data; 
+    root.x0 = h / 2;
+    root.y0 = 0; 
+    update(json_data);
+    
